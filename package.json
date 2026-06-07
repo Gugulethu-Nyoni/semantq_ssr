@@ -1,0 +1,22 @@
+{
+  "name": "@semantq/ssr",
+  "version": "1.0.0",
+  "description": "Server-Side Rendering module for SemantqQL",
+  "type": "module",
+  "semantq-module": true,
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./lib/*": "./lib/*",
+    "./routes/*": "./routes/*"
+  },
+  "dependencies": {
+    "eta": "^3.4.0"
+  },
+  "peerDependencies": {
+    "semantqql": ">=1.0.0"
+  },
+  "keywords": ["semantq", "ssr", "seo", "hydration"],
+  "author": "Semantq Team",
+  "license": "MIT"
+}
