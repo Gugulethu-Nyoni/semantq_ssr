@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= it.data.title %></title>
+    <meta name="description" content="<%= it.data.excerpt || it.data.title %>">
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; line-height: 1.6; }
+        h1 { color: #333; }
+        .content { margin: 2rem 0; }
+        .meta { color: #666; font-size: 0.875rem; border-top: 1px solid #eee; padding-top: 1rem; margin-top: 2rem; }
+    </style>
+</head>
+<body>
+    <h1><%= it.data.title %></h1>
+    <div class="content"><%- it.data.content %></div>
+    <div class="meta">
+        Published: <%= it.data.created_at || new Date().toISOString() %>
+    </div>
+</body>
+</html>
