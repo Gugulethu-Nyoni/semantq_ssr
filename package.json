@@ -1,6 +1,6 @@
 {
   "name": "@semantq/ssr",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Server-Side Rendering module for SemantqQL",
   "type": "module",
   "semantq-module": true,
@@ -12,9 +12,6 @@
   },
   "dependencies": {
     "eta": "^3.4.0"
-  },
-  "peerDependencies": {
-    "semantqql": ">=1.0.0"
   },
   "keywords": ["semantq", "ssr", "seo", "hydration"],
   "author": "Semantq Team",
