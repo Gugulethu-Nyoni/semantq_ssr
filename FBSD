@@ -1,0 +1,13 @@
+packages/@semantq/ssr/
+├── lib/
+│   ├── Hydration.js
+│   ├── ResourceRenderer.js
+│   ├── SlugIndex.js
+│   └── SSRMiddleware.js
+├── routes/
+│   └── ssrRoutes.js
+├── views/
+│   └── default/
+│       └── detail.eta
+├── index.js
+└── package.json
