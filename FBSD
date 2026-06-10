@@ -1,13 +1,13 @@
 packages/@semantq/ssr/
 ├── lib/
-│   ├── Hydration.js
-│   ├── ResourceRenderer.js
-│   ├── SlugIndex.js
-│   └── SSRMiddleware.js
+│   ├── Hydration.js        (unchanged)
+│   ├── ResourceRenderer.js (unchanged)
+│   ├── SlugIndex.js        (unchanged)
+│   └── SSRMiddleware.js    (UPDATED to use Core Runtime)
 ├── routes/
-│   └── ssrRoutes.js
+│   └── ssrRoutes.js        (unchanged)
 ├── views/
 │   └── default/
-│       └── detail.eta
-├── index.js
-└── package.json
+│       └── detail.eta      (unchanged)
+├── index.js                (UPDATED to capabilities only - THIS FILE)
+└── package.json            (unchanged)

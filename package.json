@@ -10,10 +10,12 @@
     "./lib/*": "./lib/*",
     "./routes/*": "./routes/*"
   },
-  "dependencies": {
-    "eta": "^3.4.0"
-  },
-  "keywords": ["semantq", "ssr", "seo", "hydration"],
+  "keywords": [
+    "semantq",
+    "ssr",
+    "seo",
+    "hydration"
+  ],
   "author": "Semantq Team",
   "license": "MIT"
 }

@@ -1,69 +1,72 @@
-// packages/@semantq/ssr/index.js
-import { SSRMiddleware } from './lib/SSRMiddleware.js';
-import { ResourceRenderer } from './lib/ResourceRenderer.js';
+import { CapabilityRegistry } from '../../../core/registry/CapabilityRegistry.js';
+import { AdapterRegistry } from '../../../core/registry/AdapterRegistry.js';
 import { SlugIndex } from './lib/SlugIndex.js';
-import { injectHydrationState } from './lib/Hydration.js';
+import htmlAdapter from './adapters/html.js';
 
 export default {
   name: '@semantq/ssr',
-  version: '1.0.0',
+  version: '2.0.0',
 
   async register(app, config) {
-    console.log('[SSR] Register function CALLED');
-    console.log('[SSR] Config received:', JSON.stringify(config.ssr, null, 2));
-    
     const ssrConfig = config.ssr || {};
     
-    if (!ssrConfig.enabled) {
-      console.log('[SSR] Disabled by configuration');
-      return;
-    }
-    
-    console.log('[SSR] SSR is ENABLED, initializing...');
-    
-    // Get event bus from app
-    const eventBus = app.get('eventBus');
-    const dbAdapter = app.get('dbAdapter');
-    
-    // Get Prisma client if available
-    let prisma = null;
-    try {
-      const getPrisma = await import('../../../lib/prisma.js');
-      prisma = await getPrisma.default();
-    } catch (err) {
-      console.log('[SSR] Prisma not available');
-    }
-    
-    // Determine slug index mode
-    const slugIndexMode = ssrConfig.slugIndexMode || (prisma ? 'prisma' : 'raw');
-    
+    if (!ssrConfig.enabled) return;
+
     // Initialize slug index
     const slugIndex = new SlugIndex();
     await slugIndex.init({
-      mode: slugIndexMode,
-      prisma: prisma,
-      adapter: dbAdapter,
+      mode: ssrConfig.slugIndexMode || 'prisma',
       staticRoutes: ssrConfig.staticRoutes || {}
     });
+
+    // Get or create capability registry
+    let registry = app.get('capabilityRegistry');
+    if (!registry) {
+      registry = new CapabilityRegistry();
+      app.set('capabilityRegistry', registry);
+    }
     
-    // Create renderer
-    const renderer = new ResourceRenderer({
-      templatesDir: ssrConfig.templatesDir || './views/ssr',
-      cache: ssrConfig.cache !== false,
-      hydrateStrategy: ssrConfig.hydrateStrategy || 'json-script'
-    });
+    // Get or create adapter registry
+    let adapterRegistry = app.get('adapterRegistry');
+    if (!adapterRegistry) {
+      adapterRegistry = new AdapterRegistry();
+      app.set('adapterRegistry', adapterRegistry);
+    }
     
-    // Store on app for controllers
-    app.set('ssrRenderer', renderer);
+    // Register HTML adapter
+    adapterRegistry.register('html', htmlAdapter);
+    
     app.set('ssrEnabled', true);
     app.set('slugIndex', slugIndex);
-    
-    // Create and mount middleware
-    const middleware = new SSRMiddleware({ slugIndex, renderer, config: ssrConfig });
-    app.use(middleware.handle.bind(middleware));
-    
-    console.log('[SSR] Module registered successfully');
-    
-    return { slugIndex, renderer };
+
+    // Register capabilities
+    registry.register('slug.resolve', async (params, ctx, deps) => {
+      const slug = ctx.params.slug || ctx.params.identifier;
+      const resolved = await slugIndex.resolve(slug);
+      return resolved;
+    });
+
+    registry.register('resource.resolve', async (params, ctx, deps) => {
+      const { resource_type, resource_id } = deps[0];
+      const service = await import(`../../../services/${resource_type}Service.js`);
+      return service.default.getById(resource_id);
+    });
+
+    // Register render.manifest capability
+    registry.register('render.manifest', async (params, ctx, deps) => {
+      const data = deps[0];
+      return {
+        adapter: params.adapter || 'html',
+        component: params.component || 'default',
+        props: data,
+        layout: params.layout || 'default',
+        metadata: {
+          timestamp: Date.now(),
+          path: ctx.metadata?.path
+        }
+      };
+    });
+
+    console.log('[SSR] Registered as pure adapter (no templates)');
   }
 };
