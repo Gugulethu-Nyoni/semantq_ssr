@@ -1,1 +1,2 @@
-Read for me @semantq/ssr
+- Todos
+- Consolidate with semantqQL content operating system
