@@ -1,3 +1,4 @@
 - Todos
 - Consolidate with semantqQL content operating system
 - Streamline the graph modules
+- Transform to content operating system
